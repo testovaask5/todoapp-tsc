@@ -1,22 +1,34 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import { Task } from './types';
 import TasksList from './components/TasksList';
 import NewTask from './components/NewTask';
 
-const initTasks: Array<Task> = [{
-  text: "task 1",
-  completed: true
-}, {
-  text: "task 2",
-  completed: false,
-  comment: "Some comment"
-}]
-
 function App() {
-  const [tasks, setTasks] = useState<Task[]>(initTasks)
-  const addTask = (task: Task) => setTasks([...tasks, task])
+  const [tasks, setTasks] = useState<Task[]>([])
+  
+  useEffect(() => {
+    fetch('/api/tasks').then(response => {
+      if (response.ok) return response.json();
+      else throw new Error('Response is not ok')
+    }).then((tasksFromServer: Task[]) => {
+      setTasks(tasksFromServer)
+    }).catch(error => console.error(error))
+  }, [])
+
+  const addTask = async (task: Task) => {
+    const response = await fetch('/api/task', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(task)
+    })
+    if (response.ok) {
+      setTasks([...tasks, await response.json()])
+    }
+  }
   return (
     <div>
       <NewTask addTask={addTask} />
