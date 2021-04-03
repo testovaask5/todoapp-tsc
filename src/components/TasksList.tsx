@@ -1,18 +1,18 @@
+import List from "@material-ui/core/List"
 import { Task, MapArrayToJSX } from "../types"
+import TaskComponent from "./TaskComponent"
 
 type TasksListProps = {
-    tasks: Task[]
+    tasks: Task[],
+    toggleTask: (task: Task) => void
 }
-export default function TasksList ({tasks}: TasksListProps) {
-    const mapCallback: MapArrayToJSX<Task> = (task, index) => {
-        return <li key={index} 
-        style={{ textDecoration: task.completed ? 'line-through' : 'none' }}>
-            {task.text}
-        </li>
+export default function TasksList ({tasks, toggleTask}: TasksListProps) {
+    const mapCallback: MapArrayToJSX<Task> = (task) => {
+        return <TaskComponent key={task.id} task={task} toggleTask={toggleTask} />
     }
     return (
-        <ul>
+        <List component="ul">
             {tasks.map(mapCallback)}
-        </ul>
+        </List>
     )
 }
