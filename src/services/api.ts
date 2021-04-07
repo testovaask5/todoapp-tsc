@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Task } from "../types";
+import { Task, TaskDTO } from "../types";
 
 type postTaskDTO = Task
 
@@ -9,19 +9,25 @@ type patchTaskDTO = {
 }
 
 export function useFetchTasks(url: string) {
-    const [tasks, setTasks] = useState<Task[]>([])
+    const [tasks, setTasks] = useState<TaskDTO[]>([])       
+    const [error, setError] = useState<Error | null>(null)       
+    const [loading, setLoading] = useState(true)       
 
     useEffect(() => {
-        fetch(url).then(response => {
+        fetch(url).then(response => {            
             if (response.ok) return response.json();
             else throw new Error('Response is not ok')
-        }).then((tasksFromServer: Task[]) => {
+        }).then((tasksFromServer: TaskDTO[]) => {
             setTasks(tasksFromServer)
-        }).catch(error => console.error(error))
+            setLoading(false)
+        }).catch((err: Error) => {
+            console.error(err)
+            setError(err)
+        })
     }, [])
 
-    const result: [Task[], typeof setTasks] = [tasks, setTasks]
-    return result
+    const result: [TaskDTO[], typeof setTasks] = [tasks, setTasks]
+    return {loading, error, result}
 }
 
 export function post(url: string, body: postTaskDTO) {

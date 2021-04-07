@@ -1,21 +1,37 @@
 import './App.css';
-import { Task } from './types';
+import { Task, TaskDTO } from './types';
 import TasksList from './components/TasksList';
 import NewTask from './components/NewTask';
 import { makeStyles } from '@material-ui/core';
 import { patch, post, useFetchTasks } from './services/api';
+import React, { useState } from 'react';
+import Alert from '@material-ui/lab/Alert';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const useStyles = makeStyles({
   root: {
     margin: "1rem auto",
     minWidth: 300,
     maxWidth: 800
+  },
+  loader: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    margin: 'auto'
   }
 })
 
 function App() {
   const classes = useStyles()
-  const [tasks, setTasks] = useFetchTasks('/api/tasks')
+  
+  const fetchResult  = useFetchTasks('/api/tasks')
+  const [toggleError, setToggleError] = useState(false)
+  const [tasks, setTasks] = fetchResult.result
+  const error = fetchResult.error
+  const loading = fetchResult.loading
 
   const addTask = async (task: Task) => {
     const response = await post('/api/task', task)
@@ -23,20 +39,40 @@ function App() {
       setTasks([...tasks, await response.json()])
     }
   }
-  const toggleTask = async (task: Task) => {
+  const toggleTask = async (task: TaskDTO) => {
+    const newTasks = tasks.map((oldTask) => {
+      if (oldTask.id !== task.id) return oldTask
+      else return ({...task, completed: !task.completed})
+    })
+    setTasks(newTasks)
     const response = await patch(`/api/task/${task.id}`, { completed: !task.completed })
-    if (response.ok) {
-      const newTasks = tasks.map((oldTask) => {
-        if (oldTask.id !== task.id) return oldTask
-        else return ({...task, completed: !task.completed})
-      })
-      setTasks(newTasks)
+    if (!response.ok) {
+      setTasks(tasks)
+      setToggleError(true)
+      setTimeout(() => setToggleError(false), 5000)
     }
   }
+
+  const editTask = async (task: TaskDTO) => {
+
+  }
+
+  const removeTask = async (id: number) => {
+    const newTasks = tasks.filter(task => id !== task.id)
+    setTasks(newTasks)
+  }
+
+  if (error) return <Alert severity="error">{error.message}</Alert>
+  if (loading) return <CircularProgress className={classes.loader} />
+
   return (
-    <div className={classes.root}>
+    <div className={classes.root}>   
+      {toggleError && <Alert severity="error">Can't toggle on the server</Alert>}   
       <NewTask addTask={addTask} />
-      <TasksList tasks={tasks} toggleTask={toggleTask} />
+      <TasksList tasks={tasks} 
+        toggleTask={toggleTask} 
+        editTask={editTask}
+        removeTask={removeTask} />
     </div>
   );
 }

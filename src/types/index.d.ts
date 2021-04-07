@@ -1,8 +1,10 @@
 export type Task = {
-    id?: number
     text: string
     completed: boolean
-    comment?: string
+}
+
+export type TaskDTO = Task & {
+    id: number
 }
 
 export type MapArrayToJSX<T> = {

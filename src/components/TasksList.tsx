@@ -1,14 +1,22 @@
 import List from "@material-ui/core/List"
-import { Task, MapArrayToJSX } from "../types"
+import { TaskDTO, MapArrayToJSX } from "../types"
 import TaskComponent from "./TaskComponent"
 
 type TasksListProps = {
-    tasks: Task[],
-    toggleTask: (task: Task) => void
+    tasks: TaskDTO[],
+    toggleTask: (task: TaskDTO) => void
+    editTask: (task: TaskDTO) => void
+    removeTask: (id: number) => void
 }
-export default function TasksList ({tasks, toggleTask}: TasksListProps) {
-    const mapCallback: MapArrayToJSX<Task> = (task) => {
-        return <TaskComponent key={task.id} task={task} toggleTask={toggleTask} />
+export default function TasksList ({tasks, toggleTask, editTask, removeTask}: TasksListProps) {
+    const mapCallback: MapArrayToJSX<TaskDTO> = (task) => {
+        return <TaskComponent 
+            key={task.id} 
+            task={task} 
+            toggleTask={toggleTask}
+            editTask={editTask}
+            removeTask={removeTask}
+             />
     }
     return (
         <List component="ul">
