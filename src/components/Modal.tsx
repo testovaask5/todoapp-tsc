@@ -12,50 +12,45 @@ const useStyles = makeStyles((theme: Theme) =>
             justifyContent: 'center',
         },
         paper: {
-            
+            backgroundColor: '#fff',
+            border: '2px solid #000',
+            boxShadow: '0px 3px 5px -1px rgb(0 0 0 / 20%), 0px 5px 8px 0px rgb(0 0 0 / 14%), 0px 1px 14px 0px rgb(0 0 0 / 12%)',
+            padding: '16px 32px 24px',
         },
     }),
 );
 
 type ModalUIProps = {
     children: React.ReactNode
+    open: boolean
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function ModalUI({ children }: ModalUIProps) {
+export default function ModalUI({ children, open, setOpen }: ModalUIProps) {
     const classes = useStyles();
-    const [open, setOpen] = React.useState(false);
-
-    const handleOpen = () => {
-        setOpen(true);
-    };
-
+    
     const handleClose = () => {
         setOpen(false);
     };
 
     return (
-        <div>
-            <button type="button" onClick={handleOpen}>
-                react-transition-group
-      </button>
-            <Modal
-                aria-labelledby="transition-modal-title"
-                aria-describedby="transition-modal-description"
-                className={classes.modal}
-                open={open}
-                onClose={handleClose}
-                closeAfterTransition
-                BackdropComponent={Backdrop}
-                BackdropProps={{
-                    timeout: 500,
-                }}
-            >
-                <Fade in={open}>
-                    <div className={classes.paper}>
-                        {children}
-                    </div>
-                </Fade>
-            </Modal>
-        </div>
+        <Modal
+            aria-labelledby="transition-modal-title"
+            aria-describedby="transition-modal-description"
+            className={classes.modal}
+            open={open}
+            onClose={handleClose}
+            closeAfterTransition
+            BackdropComponent={Backdrop}
+            BackdropProps={{
+                timeout: 500,
+            }}
+        >
+            <Fade in={open}>
+                <div className={classes.paper}>
+                    {children}
+                </div>
+            </Fade>
+        </Modal>
     );
 }

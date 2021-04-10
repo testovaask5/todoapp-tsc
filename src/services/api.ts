@@ -49,3 +49,9 @@ export function patch(url: string, body: patchTaskDTO) {
         body: JSON.stringify(body)
     })
 }
+
+export function remove(url: string) {
+    return fetch(url, {
+        method: 'DELETE'
+    })
+}
