@@ -1,7 +1,6 @@
 import { Button, makeStyles, TextField } from "@material-ui/core"
 import React, { useState } from "react"
-import { useDispatch } from "react-redux"
-import { createTask } from "../features/tasks/tasksSlice"
+import { Task } from "../types"
 
 const useStyles = makeStyles({
     root: {
@@ -14,25 +13,25 @@ const useStyles = makeStyles({
     }
 })
 
-export default function NewTask() {
+type NewTaskProps = {
+    addTask: (task: Task) => void
+}
+
+export default function NewTask({addTask}: NewTaskProps) {
     const classes = useStyles()
     const [inputValue, setInputValue] = useState('')
-    const dispatch = useDispatch()
-
     const submitHandler = (event: React.SyntheticEvent) => {
         event.preventDefault()
         if (inputValue === '') return;
-        dispatch(createTask({
+        addTask({
             text: inputValue,
             completed: false
-        }))
+        })
         setInputValue('')
     }
-
     const inputHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
         setInputValue(event.target.value)
     }
-
     return (
         <form onSubmit={submitHandler} className={classes.root}>
             <TextField className={classes.input} value={inputValue} onChange={inputHandler} label="Task" variant="outlined" />

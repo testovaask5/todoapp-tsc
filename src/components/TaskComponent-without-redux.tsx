@@ -13,15 +13,18 @@ const useStyles = makeStyles({
 
 type TaskProps = {
   task: TaskDTO
+  toggleTask: (task: TaskDTO) => void
+  editTask: (task: TaskDTO) => void
+  removeTask: (id: number) => void
 }
-export default function TaskComponent({ task }: TaskProps) {
+export default function TaskComponent({ task, toggleTask, editTask, removeTask }: TaskProps) {
   const classes = useStyles()
   const [open, setOpen] = React.useState(false);
 
   return (
     <>
       <ListItem button className={classes.root}>
-        <ListItemText onClick={() => {}} style={{ textDecoration: task.completed ? 'line-through' : 'none' }}>
+        <ListItemText onClick={() => toggleTask(task)} style={{ textDecoration: task.completed ? 'line-through' : 'none' }}>
           {task.text}
         </ListItemText>
         <Button variant="contained" color="primary"
@@ -29,12 +32,12 @@ export default function TaskComponent({ task }: TaskProps) {
           Edit
         </Button>
         <Button variant="contained" color="secondary"
-          onClick={() => {}}>
+          onClick={() => removeTask(task.id)}>
           Remove
         </Button>
       </ListItem>
       <ModalUI open={open} setOpen={setOpen} >
-        <EditTask editTask={() => {}} task={task} setOpen={setOpen} />
+        <EditTask editTask={editTask} task={task} setOpen={setOpen} />
       </ModalUI>
     </>
   )
