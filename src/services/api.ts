@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { selectToken } from "../features/users/usersSlice";
 import { Task, TaskDTO } from "../types";
 
 type postTaskDTO = Task
@@ -8,13 +10,21 @@ type patchTaskDTO = {
     completed: boolean
 }
 
+type userInfoDTO = {
+    name: string
+    password: string
+}
+
 export function useFetchTasks(url: string) {
     const [tasks, setTasks] = useState<TaskDTO[]>([])       
     const [error, setError] = useState<Error | null>(null)       
-    const [loading, setLoading] = useState(true)       
+    const [loading, setLoading] = useState(true)
+    const token = useSelector(selectToken)  
 
     useEffect(() => {
-        fetch(url).then(response => {            
+        fetch(url, { headers: {
+            'authorization': token
+        }}).then(response => {            
             if (response.ok) return response.json();
             else throw new Error('Response is not ok')
         }).then((tasksFromServer: TaskDTO[]) => {
@@ -30,7 +40,7 @@ export function useFetchTasks(url: string) {
     return {loading, error, result}
 }
 
-export function post(url: string, body: postTaskDTO) {
+export function post(url: string, body: postTaskDTO | userInfoDTO) {
     return fetch(url, {
         method: 'POST',
         headers: {

@@ -8,8 +8,11 @@ interface TasksState {
     tasks: TaskDTO[]
 }
 
-export const fetchTasks = createAsyncThunk('tasks/fetchTasks', async function () {
-    const response = await fetch('/api/tasks')
+export const fetchTasks = createAsyncThunk('tasks/fetchTasks', async function (arg, thunkAPI) {
+    const state = thunkAPI.getState() as RootState
+    const response = await fetch('/api/tasks', { headers: {        
+        'authorization': state.users.token
+    }})
     if (response.ok) {
         const tasksFromServer: TaskDTO[] = await response.json();
         return tasksFromServer
