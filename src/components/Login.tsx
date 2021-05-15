@@ -3,19 +3,15 @@ import TextField from "@material-ui/core/TextField";
 import React, { SyntheticEvent, useState } from "react";
 import { useDispatch } from "react-redux";
 import { login } from "../features/users/usersSlice";
-import { post } from "../services/api";
 
-export default function Registration() {
+export default function Login() {
   const [name, setName] = useState('')
   const [password, setPassword] = useState('')
   const dispatch = useDispatch()
 
   async function submitHandler(event: SyntheticEvent) {
     event.preventDefault();
-    const response = await post('/api/user', { name, password });
-    if (response.ok) {
-      const userFromDb = await response.json()
-    }
+    dispatch(login({name, password}))    
   }
 
   return (
@@ -28,7 +24,7 @@ export default function Registration() {
         onChange={event => setPassword(event.target.value)}
         label="Password"
         variant="outlined" />
-      <Button type="submit" variant="contained" color="primary">Registration</Button>
+      <Button type="submit" variant="contained" color="primary">Login</Button>
     </form>
   )
 }

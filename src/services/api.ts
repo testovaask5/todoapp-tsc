@@ -10,7 +10,7 @@ type patchTaskDTO = {
     completed: boolean
 }
 
-type userInfoDTO = {
+export type userInfoDTO = {
     name: string
     password: string
 }

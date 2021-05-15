@@ -1,13 +1,14 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
+import { post, userInfoDTO } from "../../services/api";
 
 type LoginResponse = {
     token: string
     success: boolean
 }
 
-export const login = createAsyncThunk('users/login', async function () {
-    const response = await fetch('/api/users/login')
+export const login = createAsyncThunk('user/login', async function (user: userInfoDTO) {
+    const response = await post('/api/user/login', user)
     if (response.ok) {
         const responseToken: LoginResponse = await response.json();
         return responseToken.token
