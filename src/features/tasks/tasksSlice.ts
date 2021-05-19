@@ -20,17 +20,33 @@ export const fetchTasks = createAsyncThunk('tasks/fetchTasks', async function (a
     else throw new Error('Response is not ok')
 })
 
-export const createTask = createAsyncThunk('tasks/createTask', async function(newTask: Task) {
+export const createTask = createAsyncThunk('tasks/createTask', async function(newTask: Task, thunkAPI) {
+    const state = thunkAPI.getState() as RootState
     const response = await fetch('/api/task', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'authorization': state.users.token
         },
         body: JSON.stringify(newTask)
     })
     if (response.ok) {
         const taskFromServer: TaskDTO = await response.json();
         return taskFromServer
+    }
+    else throw new Error('Response is not ok')
+})
+
+export const removeTask = createAsyncThunk('tasks/removeTask', async function(id: number, thunkAPI) {
+    const state = thunkAPI.getState() as RootState
+    const response = await fetch('/api/task/' + id, {
+        method: 'DELETE',
+        headers: {
+            'authorization': state.users.token
+        }
+    })
+    if (response.ok) {
+        return id
     }
     else throw new Error('Response is not ok')
 })
@@ -42,11 +58,7 @@ export const tasksSlice = createSlice({
         error: null,
         tasks: []
     } as TasksState,
-    reducers: {
-        // taskAdded(state, action: PayloadAction<TaskDTO>) {
-        //     state.tasks.push(action.payload)
-        // }
-    },
+    reducers: {},
     extraReducers: builder => {
         builder.addCase(fetchTasks.pending, (state, action) => {
             state.status = 'loading'
@@ -61,6 +73,13 @@ export const tasksSlice = createSlice({
         })
         builder.addCase(createTask.fulfilled, (state, action) => {
             state.tasks.push(action.payload)
+        })
+        builder.addCase(removeTask.fulfilled, (state, action) => {
+            // state.tasks.push(action.payload)
+            const newTasks = state.tasks.filter(task => {
+                return task.id !== action.payload
+            })
+            state.tasks = newTasks
         })
     }
 })

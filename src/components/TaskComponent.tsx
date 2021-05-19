@@ -1,6 +1,8 @@
 import { Button, ListItemText, makeStyles } from "@material-ui/core"
 import ListItem from "@material-ui/core/ListItem"
 import React from "react"
+import { useDispatch } from "react-redux"
+import { removeTask } from "../features/tasks/tasksSlice"
 import { TaskDTO } from "../types"
 import EditTask from "./EditTask"
 import ModalUI from "./Modal"
@@ -17,6 +19,7 @@ type TaskProps = {
 export default function TaskComponent({ task }: TaskProps) {
   const classes = useStyles()
   const [open, setOpen] = React.useState(false);
+  const dispatch = useDispatch()
 
   return (
     <>
@@ -29,7 +32,7 @@ export default function TaskComponent({ task }: TaskProps) {
           Edit
         </Button>
         <Button variant="contained" color="secondary"
-          onClick={() => {}}>
+          onClick={() => { dispatch(removeTask(task.id)) }}>
           Remove
         </Button>
       </ListItem>

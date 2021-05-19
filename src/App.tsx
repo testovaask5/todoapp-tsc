@@ -1,30 +1,53 @@
 import TasksList from './components/TasksList';
 import NewTask from './components/NewTask';
-import { makeStyles } from '@material-ui/core';
-import { useSelector } from 'react-redux';
-import { selectToken } from './features/users/usersSlice';
+import { createStyles, makeStyles, Theme } from '@material-ui/core';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout, selectIsLogin, selectToken } from './features/users/usersSlice';
 import Login from './components/Login';
+import React from 'react';
+import Button from '@material-ui/core/Button';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
 
-const useStyles = makeStyles({
-  root: {
-    margin: "1rem auto",
-    minWidth: 300,
-    maxWidth: 800
-  }
-})
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      margin: "1rem auto",
+      minWidth: 300,
+      maxWidth: 800
+    },
+    title: {
+      flexGrow: 1,
+    },
+  })
+)
 
 function App() {
-  const token = useSelector(selectToken)
+  const isLogin = useSelector(selectIsLogin)
   const classes = useStyles()
+  const dispatch = useDispatch()
 
-  if (token === '') {
-    return <Login />
-  } else return (
-    <div className={classes.root}>
-      <NewTask />
-      <TasksList />
-    </div>
-  );
+  if (isLogin) {
+    return (
+      <div>
+        <AppBar position="static">
+          <Toolbar>
+            <Typography variant="h6" className={classes.title}>
+              Tasks
+            </Typography>
+            <Button onClick={() => {
+              dispatch(logout())
+            }} color="inherit">Logout</Button>
+          </Toolbar>
+        </AppBar>
+        <div className={classes.root}>
+          <NewTask />
+          <TasksList />
+        </div>
+      </div>
+    )
+  } else return <Login />;
 }
 
 export default App;
