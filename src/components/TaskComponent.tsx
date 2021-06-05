@@ -2,7 +2,7 @@ import { Button, ListItemText, makeStyles } from "@material-ui/core"
 import ListItem from "@material-ui/core/ListItem"
 import React from "react"
 import { useDispatch } from "react-redux"
-import { removeTask } from "../features/tasks/tasksSlice"
+import { editTask, removeTask } from "../features/tasks/tasksSlice"
 import { TaskDTO } from "../types"
 import EditTask from "./EditTask"
 import ModalUI from "./Modal"
@@ -24,7 +24,9 @@ export default function TaskComponent({ task }: TaskProps) {
   return (
     <>
       <ListItem button className={classes.root}>
-        <ListItemText onClick={() => {}} style={{ textDecoration: task.completed ? 'line-through' : 'none' }}>
+        <ListItemText onClick={() => {
+          dispatch(editTask({ ...task, completed: !task.completed }))
+        }} style={{ textDecoration: task.completed ? 'line-through' : 'none' }}>
           {task.text}
         </ListItemText>
         <Button variant="contained" color="primary"
@@ -36,9 +38,9 @@ export default function TaskComponent({ task }: TaskProps) {
           Remove
         </Button>
       </ListItem>
-      <ModalUI open={open} setOpen={setOpen} >
-        <EditTask editTask={() => {}} task={task} setOpen={setOpen} />
-      </ModalUI>
+      {open && <ModalUI open={open} setOpen={setOpen} >
+        <EditTask editTask={(editedTask) => { dispatch(editTask(editedTask)) }} task={task} setOpen={setOpen} />
+      </ModalUI>}
     </>
   )
 }

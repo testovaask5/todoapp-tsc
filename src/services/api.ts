@@ -40,28 +40,33 @@ export function useFetchTasks(url: string) {
     return {loading, error, result}
 }
 
-export function post(url: string, body: postTaskDTO | userInfoDTO) {
+export function post(url: string, body: postTaskDTO | userInfoDTO, token?: string) {
     return fetch(url, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'authorization': token || ''
         },
         body: JSON.stringify(body)
     })
 }
 
-export function patch(url: string, body: patchTaskDTO) {
+export function patch(url: string, body: patchTaskDTO, token?: string) {
     return fetch(url, {
         method: 'PATCH',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'authorization': token || ''
         },
         body: JSON.stringify(body)
     })
 }
 
-export function remove(url: string) {
+export function remove(url: string, token?: string) {
     return fetch(url, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: {
+            'authorization': token || ''
+        }
     })
 }

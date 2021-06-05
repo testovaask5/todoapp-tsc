@@ -9,6 +9,7 @@ import Button from '@material-ui/core/Button';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
+import { resetTasks } from './features/tasks/tasksSlice';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -38,6 +39,7 @@ function App() {
             </Typography>
             <Button onClick={() => {
               dispatch(logout())
+              dispatch(resetTasks())
             }} color="inherit">Logout</Button>
           </Toolbar>
         </AppBar>
